@@ -1,11 +1,13 @@
+const res = require('express/lib/response')
 let mongoose=require('mongoose')
 let BlogsSchema=new mongoose.Schema({
 title:{
     type:String,
-    requird:true
+    required:true
+
 },
 body:{type:String,
-requird:true},
+required:true},
 authorId:{
     type:mongoose.Schema.Types.ObjectId,
     required:true,
@@ -32,7 +34,7 @@ isPublished:{
 },
 publishedAt:{
     type:Date,
-    default:Date.now()
+    default:null
 }
 
 

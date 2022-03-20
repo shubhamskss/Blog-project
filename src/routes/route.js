@@ -9,7 +9,7 @@ const middleware=require("../middleware/middleware")
 
 
 router.post("/BASE_URL/authors",AuthorController.authOrs)
-router.post("/blogs",BlogsController.Blogs)
+router.post("/blogs",middleware.mid1,BlogsController.Blogs)
 router.get("/blogs",middleware.mid1,BlogsController.getBlogsData)
 router.put("/blogs/:blogId",middleware.authorisation,BlogsController.updateBlogs)
 router.delete("/blogs/:blogId",middleware.authorisation,BlogsController.deleteBlogs)

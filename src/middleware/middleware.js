@@ -21,6 +21,8 @@ let authorisation=async function(req,res,next){
     console.log(authorId)
     let Blogtobemodified=authorId.authorId
     console.log(Blogtobemodified)
+    // if(!Blogtobemodified)
+    // Blogtobemodified=req.query.authorId
     let Authorloggedin=decodetoken.authorId
     console.log(Authorloggedin)
     if(Blogtobemodified!=Authorloggedin){return res.status(403).send({msg:"Authorisation failed"})}
