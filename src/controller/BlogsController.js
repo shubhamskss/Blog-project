@@ -98,17 +98,18 @@ const updateBlogs = async function (req, res) {
             let blogId = req.params.blogId
             if(!isvalidObjectId(blogId)){return res.status(400).send({msg:"in valid blogid"})}
             let blog = await BlogsModel.findOne({ _id: blogId, isDeleted: false })
-            if(isDeleted=true){res.status(400).send("allready deleted")}
+            
+           
            
             let allblog = await BlogsModel.findOneAndUpdate(
                 { _id: blogId, isDeleted: false },
                 { $set: { title: title, body: body, isPublished: true, publishedAt: Date.now() }, $push: { tags: tags, subcategory: subcategory } },
                 { new: true })
     
-    
+                if(allblog.isDeleted==true){res.status(400).send("allready deleted")}
             res.status(200).send({ msg: allblog })  
             
-    
+           
             
             if (!blog) {
                 res.status(404).send({ msg: "no blog found" })
@@ -124,11 +125,18 @@ const updateBlogs = async function (req, res) {
 let deleteBlogs=async function(req,res){
   try{  let blogId=req.params.blogId
     let validblogId=await BlogsModel.find({_id:blogId})
+    
+    
     if(!validblogId){return res.status(400).send({msg:"Blog not found"})}
     let deletdblog=await BlogsModel.findOneAndUpdate({_id:blogId},{isDeleted:true,deletedAt:Date.now()},{new:true})
     console.log(deletdblog)
-    if(isDeleted=true){res.status(400).send("allready deleted")}
-    res.status(200).send()}
+    let check=deletdblog.isDeleted
+    console.log(check)
+    if(check=true){res.status(400).send("allready deleted")}
+    res.status(200).send()
+    
+  }
+  
     catch(err){res.status(500).send({error:err.message})}
 
   }

@@ -38,7 +38,7 @@ let authOrs = async function (req, res) {
     if(!isvalidRequestbody(requestBody)){
         res.status(400).send({status:false,message:"invalid request parameter"})
     }
-    const {firstname,lastname,email,password}=requestBody
+    const {firstname,lastname,title,email,password}=requestBody
     if(!isValid(firstname)){res.status(400).send({status:false,message:"first name is required"})}
     if(!isValid(lastname)){res.status(400).send({status:false,message:"last name is required"})}
     if(!isValid(title)){res.status(400).send({status:false,message:"title is required"})}

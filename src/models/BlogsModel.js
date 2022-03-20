@@ -1,4 +1,4 @@
-const res = require('express/lib/response')
+
 let mongoose=require('mongoose')
 let BlogsSchema=new mongoose.Schema({
 title:{
