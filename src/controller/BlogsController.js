@@ -1,7 +1,8 @@
 let BlogsModel=require('../models/BlogsModel')
 let Authormodel=require('../models/Authormodel')
 let jwt=require('jsonwebtoken')
-const { default: mongoose } = require('mongoose')
+let mongoose=require('mongoose')
+
 const isValid=function(value){
     if(typeof value==='undefined'|| value==='null'){return false}
     if(typeof value==='string'&& value.trim().length===0){return false}
@@ -36,20 +37,20 @@ const isvalidObjectId=function(objectId){
 
 
 let Blogs=async function(req,res){
-    try{let data=req.body
-    let authorid=data.authorId
+    try{let 
     const requestBody=req.body
+    let authorid=req.body.authorId
     if(!isvalidRequestbody(requestBody)){
-        res.status(400).send({status:false,message:"invalid request parameter"})
+      return  res.status(400).send({status:false,message:"invalid request parameter"})
     }
     const {title,body,category}=requestBody
-    if(!isValid(category)){res.status(400).send({status:false,message:"category is required"})}
-    if(!isValid(body)){res.status(400).send({status:false,message:"body is required"})}
-    if(!isValid(title)){res.status(400).send({status:false,message:"title is required"})}
+    if(!isValid(category)){return res.status(400).send({status:false,message:"category is required"})}
+    if(!isValid(body)){return res.status(400).send({status:false,message:"body is required"})}
+    if(!isValid(title)){return res.status(400).send({status:false,message:"title is required"})}
     
 
     if(!authorid){return res.status(404).send({msg:"author not found"})}
-let createblog=await BlogsModel.create(data)
+let createblog=await BlogsModel.create(requestBody)
 res.status(201).send({msg:createblog})
 
 
@@ -81,7 +82,7 @@ const getBlogsData=async function(req,res){
             }
         }
         const blogs=await BlogsModel.find(filterquery)
-        if(Array.isArray(blogs)&&blogs.length==0){res.status(400).send({status:false,message:"No blog found"})}
+        if(Array.isArray(blogs)&&blogs.length==0){return res.status(400).send({status:false,message:"No blog found"})}
     res.status(200).send({status:true,data:blogs})
       } catch (Error) {
         res.status(500).send({ msg: "error", error: Error.message })
@@ -98,22 +99,22 @@ const updateBlogs = async function (req, res) {
             let blogId = req.params.blogId
             if(!isvalidObjectId(blogId)){return res.status(400).send({msg:"in valid blogid"})}
             let blog = await BlogsModel.findOne({ _id: blogId, isDeleted: false })
-            
+            if (!blog) {
+                return res.status(404).send({ msg: "no blog found" })
+             }
            
            
             let allblog = await BlogsModel.findOneAndUpdate(
                 { _id: blogId, isDeleted: false },
                 { $set: { title: title, body: body, isPublished: true, publishedAt: Date.now() }, $push: { tags: tags, subcategory: subcategory } },
                 { new: true })
-    
-                if(allblog.isDeleted==true){res.status(400).send("allready deleted")}
+    console.log(allblog)
+                if(allblog.isDeleted==true){return res.status(400).send("allready deleted")}
             res.status(200).send({ msg: allblog })  
             
            
             
-            if (!blog) {
-                res.status(404).send({ msg: "no blog found" })
-            }
+          
         } catch (err) {
             console.log(err)
             res.status(500).send({ msg: err.message })
@@ -125,14 +126,12 @@ const updateBlogs = async function (req, res) {
 let deleteBlogs=async function(req,res){
   try{  let blogId=req.params.blogId
     let validblogId=await BlogsModel.find({_id:blogId})
-    
-    
+    console.log(validblogId)
+    console.log(validblogId[0].isDeleted)
+    if(validblogId[0].isDeleted==true){return res.status(400).send("already deleted")}
     if(!validblogId){return res.status(400).send({msg:"Blog not found"})}
     let deletdblog=await BlogsModel.findOneAndUpdate({_id:blogId},{isDeleted:true,deletedAt:Date.now()},{new:true})
-    console.log(deletdblog)
-    let check=deletdblog.isDeleted
-    console.log(check)
-    if(check=true){res.status(400).send("allready deleted")}
+  
     res.status(200).send()
     
   }

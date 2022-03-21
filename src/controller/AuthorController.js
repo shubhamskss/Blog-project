@@ -36,26 +36,26 @@ let authOrs = async function (req, res) {
     try {
         const requestBody=req.body
     if(!isvalidRequestbody(requestBody)){
-        res.status(400).send({status:false,message:"invalid request parameter"})
+       return res.status(400).send({status:false,message:"invalid request parameter"})
     }
     const {firstname,lastname,title,email,password}=requestBody
-    if(!isValid(firstname)){res.status(400).send({status:false,message:"first name is required"})}
-    if(!isValid(lastname)){res.status(400).send({status:false,message:"last name is required"})}
-    if(!isValid(title)){res.status(400).send({status:false,message:"title is required"})}
-    if(!isvalidTitle(title)){res.status(400).send({status:false,message:"this title is not allowed"})}
-    if(!isValid(password)){res.status(400).send({status:false,message:"password is required"})
+    if(!isValid(firstname)){return res.status(400).send({status:false,message:"first name is required"})}
+    if(!isValid(lastname)){return res.status(400).send({status:false,message:"last name is required"})}
+    if(!isValid(title)){return res.status(400).send({status:false,message:"title is required"})}
+    if(!isvalidTitle(title)){return res.status(400).send({status:false,message:"this title is not allowed"})}
+    if(!isValid(password)){return res.status(400).send({status:false,message:"password is required"})}
   const isemailAlreadyUsed=await AuthorModel.findOne({email})
-    if(isemailAlreadyUsed){res.status(400).send({status:false,message:'email is already registred'})}}
+    if(isemailAlreadyUsed){return res.status(400).send({status:false,message:'email is already registred'})}
     
-        let data = req.body
-        if (Object.keys(data).length == 0) { return res.status(400).send({ msg: "you can't send empty body" }) }
+        
+        
         var validateEmail = function (email) {
             var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             return re.test(email)
         };
         if (!validateEmail) { return res.status(400).send({ msg: "invalid email" }) }
       
-        let savedData = await AuthorModel.create(data)
+        let savedData = await AuthorModel.create(requestBody)
         res.status(201).send({ msg: savedData })
 
     }
